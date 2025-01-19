@@ -25,7 +25,7 @@ use function runtime_path;
 
 /**
  * 文件系统适配器工厂类
- * @mixin Filesystem
+ * @mixin FilesystemAdapter
  */
 class Factory extends Manager
 {
@@ -42,7 +42,7 @@ class Factory extends Manager
     protected ?string $namespace = __NAMESPACE__ . "\\Adapter\\";
 
     /**
-     * 创建文件系统
+     * 创建文件系统对象
      * @param string|AdapterEnums|null $name 包含后缀的驱动标识（格式如：local_public）
      * @param array $config Filesystem类的配置
      * @return Filesystem
@@ -63,7 +63,7 @@ class Factory extends Manager
      * @param string|null $name 包含后缀的驱动标识
      * @return FilesystemAdapter
      */
-    public function driver(string $name = null): FilesystemAdapter
+    final public function driver(string $name = null): FilesystemAdapter
     {
         return parent::driver($name);
     }
@@ -73,7 +73,7 @@ class Factory extends Manager
      * @param string $name 包含后缀的驱动标识
      * @return string
      */
-    protected function resolveType(string $name): string
+    final protected function resolveType(string $name): string
     {
         return AdapterEnums::parse($name);
     }
@@ -98,12 +98,11 @@ class Factory extends Manager
      */
     public function getDefaultDriver(): string
     {
-        $default = config('flysystem.default', 'local');
         if (static::$config === null) {
-            return $default;
+            return config('flysystem.default', 'local');
         }
 
-        return static::$config->getDefaultDriver() ?: $default;
+        return static::$config->getDefaultDriver() ?: '';
     }
 
     /**
