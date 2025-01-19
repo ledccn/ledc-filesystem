@@ -94,11 +94,16 @@ class Factory extends Manager
 
     /**
      * 默认驱动
-     * @return string|null
+     * @return string
      */
-    public function getDefaultDriver(): ?string
+    public function getDefaultDriver(): string
     {
-        return config('flysystem.default', 'local');
+        $default = config('flysystem.default', 'local');
+        if (static::$config === null) {
+            return $default;
+        }
+
+        return static::$config->getDefaultDriver() ?: $default;
     }
 
     /**
