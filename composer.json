@@ -23,6 +23,7 @@
     "workerman/webman-framework": ">=1.6",
     "league/flysystem": "^3.0",
     "overtrue/flysystem-cos": ">=5.1",
+    "ledc/container": ">=8.1",
     "ext-json": "*",
     "ext-openssl": "*"
   },
