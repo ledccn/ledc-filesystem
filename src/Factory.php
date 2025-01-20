@@ -178,9 +178,10 @@ class Factory extends Manager
      */
     public static function __callStatic(string $name, array $arguments)
     {
-        $filesystem = static::create();
-        if (is_callable([$filesystem, $name])) {
-            return static::create()->{$name}(... $arguments);
+        $factory = new self(App::getInstance());
+        $adapter = $factory->driver();
+        if (is_callable([$adapter, $name])) {
+            return $adapter->{$name}(... $arguments);
         }
         throw new BadMethodCallException('未定义的方法：' . $name);
     }
