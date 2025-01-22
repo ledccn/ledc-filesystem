@@ -16,7 +16,7 @@ interface Config
 
     /**
      * 获取默认的文件系统驱动标识
-     * @return string|null 包含后缀的驱动标识
+     * @return string 包含后缀的驱动标识
      */
-    public function getDefaultDriver(): ?string;
+    public function getDefaultDriver(): string;
 }
