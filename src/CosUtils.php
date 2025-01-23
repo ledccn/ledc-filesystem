@@ -36,8 +36,11 @@ class CosUtils
         $signature = new Signature($config['secret_id'], $config['secret_key']);
         $request = new Psr7Request($method, $url);
         $authorization = $signature->createAuthorizationHeader($request, $expires);
-        $parse_url = parse_url($url);
 
-        return compact('url', 'expires', 'authorization', 'parse_url');
+        return [
+            'url' => $url,
+            'authorization' => $authorization,
+            'parse_url' => parse_url($url),
+        ];
     }
 }
