@@ -42,6 +42,15 @@ class Factory extends Manager
     protected ?string $namespace = __NAMESPACE__ . "\\Adapter\\";
 
     /**
+     * 获取容器中的对象实例 不存在则创建（单例模式）
+     * @return static
+     */
+    public static function getInstance(): static
+    {
+        return App::pull(static::class);
+    }
+
+    /**
      * 创建文件系统对象
      * @param string|AdapterEnums|null $name 包含后缀的驱动标识（格式如：local_public）
      * @param array $config Filesystem类的配置
@@ -53,18 +62,21 @@ class Factory extends Manager
             $name = $name->name;
         }
 
-        $factory = App::pull(static::class);
-        $adapter = $factory->driver($name);
+        $adapter = static::getInstance()->driver($name);
         return new Filesystem($adapter, $config);
     }
 
     /**
      * 获取适配器
-     * @param string|null $name 包含后缀的驱动标识
+     * @param string|AdapterEnums|null $name 包含后缀的驱动标识
      * @return FilesystemAdapter
      */
-    final public function driver(string $name = null): FilesystemAdapter
+    final public function driver(string|AdapterEnums $name = null): FilesystemAdapter
     {
+        if ($name instanceof AdapterEnums) {
+            $name = $name->name;
+        }
+
         return parent::driver($name);
     }
 
@@ -103,6 +115,18 @@ class Factory extends Manager
         }
 
         return static::$config->getDefaultDriver() ?: '';
+    }
+
+    /**
+     * 清理所有驱动
+     * @return static
+     */
+    public function clearDrivers(): static
+    {
+        foreach ($this->drivers as $name => $driver) {
+            unset($this->drivers[$name]);
+        }
+        return $this;
     }
 
     /**
@@ -178,8 +202,7 @@ class Factory extends Manager
      */
     public static function __callStatic(string $name, array $arguments)
     {
-        $factory = new self(App::getInstance());
-        $adapter = $factory->driver();
+        $adapter = static::getInstance()->driver();
         if (is_callable([$adapter, $name])) {
             return $adapter->{$name}(... $arguments);
         }
