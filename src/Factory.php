@@ -56,7 +56,7 @@ class Factory extends Manager
      * @param array $config Filesystem类的配置
      * @return Filesystem
      */
-    public static function create(string|AdapterEnums $name = null, array $config = []): Filesystem
+    public static function create(string|AdapterEnums|null $name = null, array $config = []): Filesystem
     {
         if ($name instanceof AdapterEnums) {
             $name = $name->name;
@@ -71,7 +71,7 @@ class Factory extends Manager
      * @param string|AdapterEnums|null $name 包含后缀的驱动标识
      * @return FilesystemAdapter
      */
-    final public function driver(string|AdapterEnums $name = null): FilesystemAdapter
+    final public function driver(string|AdapterEnums|null $name = null): FilesystemAdapter
     {
         if ($name instanceof AdapterEnums) {
             $name = $name->name;
@@ -114,7 +114,7 @@ class Factory extends Manager
             return config('flysystem.default', 'local');
         }
 
-        return static::$config->getDefaultDriver() ?: '';
+        return static::$config->getDefaultDriver();
     }
 
     /**
@@ -123,8 +123,9 @@ class Factory extends Manager
      */
     public function clearDrivers(): static
     {
-        foreach ($this->drivers as $name => $driver) {
-            unset($this->drivers[$name]);
+        $keys = array_keys($this->drivers);
+        foreach ($keys as $key) {
+            unset($this->drivers[$key]);
         }
         return $this;
     }
