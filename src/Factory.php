@@ -15,7 +15,6 @@ use League\Flysystem\Ftp\FtpConnectionOptions;
 use League\Flysystem\Ftp\NoopCommandConnectivityChecker;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use Ledc\Container\App;
 use Ledc\Container\Manager;
 use Ledc\Filesystem\Contracts\Config;
 use Overtrue\Flysystem\Cos\CosAdapter;
@@ -40,15 +39,6 @@ class Factory extends Manager
      * @var string|null
      */
     protected ?string $namespace = __NAMESPACE__ . "\\Adapter\\";
-
-    /**
-     * 获取容器中的对象实例 不存在则创建（单例模式）
-     * @return static
-     */
-    public static function getInstance(): static
-    {
-        return App::pull(static::class);
-    }
 
     /**
      * 创建文件系统对象
@@ -115,19 +105,6 @@ class Factory extends Manager
         }
 
         return static::$config->getDefaultDriver();
-    }
-
-    /**
-     * 清理所有驱动
-     * @return static
-     */
-    public function clearDrivers(): static
-    {
-        $keys = array_keys($this->drivers);
-        foreach ($keys as $key) {
-            unset($this->drivers[$key]);
-        }
-        return $this;
     }
 
     /**
